@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!-- JBoss, the OpenSource J2EE webOS                                       -->
+<!--                                                                        -->
+<!-- Distributable under LGPL license.                                      -->
+<!-- See terms of license at http://www.gnu.org.                            -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+
+<!-- $Id$ -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>JBossOSGi Http</name>
+
+  <groupId>org.jboss.osgi.http</groupId>
+  <artifactId>jboss-osgi-http-parent</artifactId>
+  <packaging>pom</packaging>
+
+  <version>1.0.0-SNAPSHOT</version>
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.osgi</groupId>
+    <artifactId>jboss-osgi-parent</artifactId>
+    <version>1.0.5</version>
+  </parent>
+
+  <!-- Properties -->
+  <properties>
+    <version.jboss.osgi.common>1.0.4</version.jboss.osgi.common>
+    <version.jboss.osgi.felix>2.0.4</version.jboss.osgi.felix>
+    <version.jboss.osgi.spi>1.0.7-SNAPSHOT</version.jboss.osgi.spi>
+    <version.jboss.osgi.vfs>1.0.0</version.jboss.osgi.vfs>
+    <version.ops4j.pax.web>0.7.2</version.ops4j.pax.web>
+    <version.osgi>4.2.0</version.osgi>
+  </properties>
+
+  <!-- Dependencies -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.ops4j.pax.web</groupId>
+        <artifactId>pax-web-jetty-bundle</artifactId>
+        <version>${version.ops4j.pax.web}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.osgi</groupId>
+        <artifactId>jboss-osgi-spi</artifactId>
+        <version>${version.jboss.osgi.spi}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.osgi.bundles</groupId>
+        <artifactId>jboss-osgi-common</artifactId>
+        <version>${version.jboss.osgi.common}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.osgi.felix</groupId>
+        <artifactId>jboss-osgi-felix</artifactId>
+        <version>${version.jboss.osgi.felix}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.osgi.vfs</groupId>
+        <artifactId>jboss-osgi-vfs30</artifactId>
+        <version>${version.jboss.osgi.vfs}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>${version.osgi}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.enterprise</artifactId>
+        <version>${version.osgi}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <!-- Modules -->
+  <modules>
+    <module>bundle</module>
+    <module>itest</module>
+  </modules>
+
+</project>

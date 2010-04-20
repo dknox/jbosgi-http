@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- -->
+<!-- JBoss, the OpenSource J2EE webOS -->
+<!-- -->
+<!-- Distributable under LGPL license. -->
+<!-- See terms of license at http://www.gnu.org. -->
+<!-- -->
+<!-- ====================================================================== -->
+
+<!-- $Id$ -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>JBossOSGi Http - iTests</name>
+
+  <groupId>org.jboss.osgi.http</groupId>
+  <artifactId>jboss-osgi-http-itest</artifactId>
+  <packaging>jar</packaging>
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.osgi.http</groupId>
+    <artifactId>jboss-osgi-http-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <!-- Dependencies -->
+  <dependencies>
+
+    <!-- Provided Dependencies -->
+    <dependency>
+      <groupId>org.jboss.osgi.bundles</groupId>
+      <artifactId>jboss-osgi-common</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.osgi.http</groupId>
+      <artifactId>jboss-osgi-http</artifactId>
+      <version>${version}</version>
+    </dependency>
+
+    <!-- Provided Dependencies -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.enterprise</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>org.jboss.osgi.felix</groupId>
+      <artifactId>jboss-osgi-felix</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.osgi.vfs</groupId>
+      <artifactId>jboss-osgi-vfs30</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- Build -->
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundles</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <configuration>
+              <finalName>test-libs</finalName>
+              <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>scripts/assembly-bundles.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>log4j.output.dir</name>
+              <value>${project.build.directory}</value>
+            </property>
+            <property>
+              <name>project.version</name>
+              <value>${project.version}</value>
+            </property>
+            <property>
+              <name>test.archive.directory</name>
+              <value>${project.build.directory}/test-libs</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
