@@ -62,7 +62,9 @@
           <instructions>
             <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>org.jboss.osgi.http.internal.HttpServiceActivator</Bundle-Activator>
-            <Export-Package>org.jboss.osgi.http;version=${version}</Export-Package>
+            <Export-Package>
+              org.jboss.osgi.http;version=${version}
+            </Export-Package>
             <Import-Package>
             
               <!-- system -->
@@ -92,6 +94,7 @@
             </Embed-Dependency>
             <_exportcontents>
               javax.servlet*;version=2.5,
+              org.ops4j.pax.web.service;version=${version.ops4j.pax.web}
             </_exportcontents>
           </instructions>
         </configuration>
