@@ -25,13 +25,14 @@ package org.jboss.test.osgi.http;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.jboss.osgi.http.HttpServiceCapability.DEFAULT_HTTP_SERVICE_PORT;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
+import org.jboss.osgi.http.HttpServiceCapability;
 import org.jboss.osgi.testing.OSGiFrameworkTest;
 import org.jboss.osgi.testing.OSGiManifestBuilder;
 import org.jboss.shrinkwrap.api.Archives;
@@ -106,35 +107,33 @@ public class HttpServiceTestCase extends OSGiFrameworkTest
    @Test
    public void testServletAccess() throws Exception
    {
-      String line = getHttpResponse("/servlet?test=plain");
+      String line = getHttpResponse("/servlet?test=plain", 5000);
       assertEquals("Hello from Servlet", line);
    }
 
    @Test
    public void testServletInitProps() throws Exception
    {
-      String line = getHttpResponse("/servlet?test=initProp");
+      String line = getHttpResponse("/servlet?test=initProp", 5000);
       assertEquals("initProp=SomeValue", line);
    }
 
    @Test
    public void testServletBundleContext() throws Exception
    {
-      String line = getHttpResponse("/servlet?test=context");
+      String line = getHttpResponse("/servlet?test=context", 5000);
       assertEquals("http-service-test", line);
    }
 
    @Test
    public void testResourceAccess() throws Exception
    {
-      String line = getHttpResponse("/file/message.txt");
+      String line = getHttpResponse("/file/message.txt", 5000);
       assertEquals("Hello from Resource", line);
    }
 
-   private String getHttpResponse(String reqPath) throws Exception
+   private String getHttpResponse(String reqPath, int timeout) throws IOException
    {
-      URL url = new URL("http://" + getServerHost() + ":8090" + reqPath);
-      BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-      return br.readLine();
+      return HttpServiceCapability.getHttpResponse(getServerHost(), DEFAULT_HTTP_SERVICE_PORT, reqPath, timeout);
    }
 }

@@ -23,6 +23,11 @@ package org.jboss.osgi.http;
 
 //$Id$
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import org.jboss.osgi.spi.capability.Capability;
 import org.osgi.service.http.HttpService;
 
@@ -46,11 +51,49 @@ import org.osgi.service.http.HttpService;
  */
 public class HttpServiceCapability extends Capability
 {
+   /** The default HttpService port: 8090 */
+   public static final int DEFAULT_HTTP_SERVICE_PORT = 8090;
+   
    public HttpServiceCapability()
    {
       super(HttpService.class.getName());
-      addSystemProperty("org.osgi.service.http.port", "8090");
+      addSystemProperty("org.osgi.service.http.port", new Integer(DEFAULT_HTTP_SERVICE_PORT).toString());
       
       addBundle("bundles/jboss-osgi-http.jar");
+   }
+
+   public static String getHttpResponse(String host, int port, String reqPath, int timeout) throws IOException 
+   {
+      int fraction = 200;
+      
+      String line = null;
+      IOException lastException = null;
+      while (line == null && 0 < (timeout -= fraction))
+      {
+         try
+         {
+            URL url = new URL("http://" + host + ":" + port + reqPath);
+            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+            line = br.readLine();
+            br.close();
+         }
+         catch (IOException ex)
+         {
+            lastException = ex;
+            try
+            {
+               Thread.sleep(fraction);
+            }
+            catch (InterruptedException ie)
+            {
+               // ignore
+            }
+         }
+      }
+
+      if (line == null && lastException != null)
+         throw lastException;
+
+      return line;
    }
 }
