@@ -131,31 +131,4 @@
       </plugin>
     </plugins>
   </build>
-  
-  <profiles>
-  
-    <!--
-      Name: remote-testing 
-      Descr: Disable tests when remote target container is running
-    -->
-    <profile>
-      <id>remote-testing</id>
-      <activation>
-        <property>
-          <name>target.container</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 </project>
