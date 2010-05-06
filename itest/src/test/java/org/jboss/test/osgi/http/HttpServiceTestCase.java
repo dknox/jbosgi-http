@@ -23,9 +23,9 @@ package org.jboss.test.osgi.http;
 
 //$Id$
 
+import static org.jboss.osgi.http.HttpServiceCapability.DEFAULT_HTTP_SERVICE_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.jboss.osgi.http.HttpServiceCapability.DEFAULT_HTTP_SERVICE_PORT;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +44,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
 
@@ -56,22 +57,24 @@ import org.osgi.service.http.HttpService;
 public class HttpServiceTestCase extends OSGiFrameworkTest
 {
    private static Bundle testBundle;
-   
+
    @BeforeClass
    public static void beforeClass() throws Exception
    {
       // Install/Start the jboss-osgi-http bundle
       String bundleName = "jboss-osgi-http-" + System.getProperty("project.version");
       URL bundleURL = new File("../bundle/target/" + bundleName + ".jar").toURI().toURL();
+
+      BundleContext systemContext = getFramework().getBundleContext();
       Bundle bundle = systemContext.installBundle(bundleURL.toExternalForm());
       bundle.start();
    }
-   
+
    @Before
    public void setUp() throws Exception
    {
       super.setUp();
-      
+
       if (testBundle == null)
       {
          // Build a test bundle with shrinkwrap
@@ -92,18 +95,18 @@ public class HttpServiceTestCase extends OSGiFrameworkTest
                return builder.openStream();
             }
          });
-         
+
          // Install/Start the test bundle
          testBundle = installBundle(archive);
          testBundle.start();
          assertBundleState(Bundle.ACTIVE, testBundle.getState());
-         
+
          // Allow 10s for the HttpService to become available
          ServiceReference sref = getServiceReference(HttpService.class.getName(), 10000);
          assertNotNull("HttpService available", sref);
       }
    }
-   
+
    @Test
    public void testServletAccess() throws Exception
    {
