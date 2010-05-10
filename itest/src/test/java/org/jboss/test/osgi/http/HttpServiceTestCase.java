@@ -46,6 +46,7 @@ import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.launch.Framework;
 import org.osgi.service.http.HttpService;
 
 /**
@@ -65,7 +66,10 @@ public class HttpServiceTestCase extends OSGiFrameworkTest
       String bundleName = "jboss-osgi-http-" + System.getProperty("project.version");
       URL bundleURL = new File("../bundle/target/" + bundleName + ".jar").toURI().toURL();
 
-      BundleContext systemContext = getFramework().getBundleContext();
+      Framework framework = createFramework();
+      framework.start();
+      
+      BundleContext systemContext = framework.getBundleContext();
       Bundle bundle = systemContext.installBundle(bundleURL.toExternalForm());
       bundle.start();
    }
