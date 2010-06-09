@@ -23,9 +23,11 @@ package org.jboss.osgi.http.internal;
 
 //$Id$
 
-import org.ops4j.pax.web.service.jetty.internal.CompositeActivator;
+//import org.ops4j.pax.web.service.jetty.internal.CompositeActivator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+
+import org.jboss.osgi.http.HttpServiceFactory;
 
 /**
  * An HttpService activator
@@ -33,17 +35,28 @@ import org.osgi.framework.BundleContext;
  * @author thomas.diesler@jboss.com
  * @since 19-Apr-2010
  */
-public class HttpServiceActivator extends CompositeActivator implements BundleActivator
+public class HttpServiceActivator 
+// extends CompositeActivator 
+   implements BundleActivator
 {
+   private final HttpServiceFactory serviceFactory;
+
+   public HttpServiceActivator()
+   {
+      serviceFactory = new HttpServiceFactory();
+
+   }
+
    @Override
    public void start(BundleContext context) throws Exception
    {
-      super.start(context);
+      // use the HttpServiceFatory::start
+      //super.start(context);
    }
 
    @Override
    public void stop(BundleContext context) throws Exception
    {
-      super.stop(context);
+      //super.stop(context);
    }
 }

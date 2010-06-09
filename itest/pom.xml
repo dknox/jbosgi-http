@@ -37,6 +37,14 @@
   <!-- Dependencies -->
   <dependencies>
 
+    <dependency>
+      <groupId>org.jboss.osgi</groupId>
+      <artifactId>jboss-osgi-spi</artifactId>
+      <!--
+      <version>1.0.6</version>
+      -->
+      <version>1.0.7-SNAPSHOT</version>
+    </dependency>
     <!-- Provided Dependencies -->
     <dependency>
       <groupId>org.jboss.osgi.bundles</groupId>
@@ -48,6 +56,7 @@
       <groupId>org.jboss.osgi.http</groupId>
       <artifactId>jboss-osgi-http</artifactId>
       <version>${version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Provided Dependencies -->
@@ -81,9 +90,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant-optional</artifactId>
+      <scope>test</scope>
+      <version>1.5.3-1</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant-junit</artifactId>
+      <version>1.6.5</version>
+      <scope>compile</scope>
+   </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -131,4 +152,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

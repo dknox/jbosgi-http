@@ -23,16 +23,15 @@ package org.jboss.test.osgi.http;
 
 //$Id$
 
-import static org.jboss.osgi.http.HttpServiceCapability.DEFAULT_HTTP_SERVICE_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 
-import org.jboss.osgi.http.HttpServiceCapability;
 import org.jboss.osgi.testing.OSGiFrameworkTest;
 import org.jboss.osgi.testing.OSGiManifestBuilder;
 import org.jboss.shrinkwrap.api.Archives;
@@ -45,8 +44,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
 
 /**
@@ -58,27 +57,25 @@ import org.osgi.service.http.HttpService;
 public class HttpServiceTestCase extends OSGiFrameworkTest
 {
    private static Bundle testBundle;
-
+   
    @BeforeClass
    public static void beforeClass() throws Exception
    {
       // Install/Start the jboss-osgi-http bundle
       String bundleName = "jboss-osgi-http-" + System.getProperty("project.version");
       URL bundleURL = new File("../bundle/target/" + bundleName + ".jar").toURI().toURL();
-
       Framework framework = createFramework();
       framework.start();
-      
-      BundleContext systemContext = framework.getBundleContext();
-      Bundle bundle = systemContext.installBundle(bundleURL.toExternalForm());
+
+      Bundle bundle = getSystemContext().installBundle(bundleURL.toExternalForm());
       bundle.start();
    }
-
+   
    @Before
    public void setUp() throws Exception
    {
       super.setUp();
-
+      
       if (testBundle == null)
       {
          // Build a test bundle with shrinkwrap
@@ -99,48 +96,51 @@ public class HttpServiceTestCase extends OSGiFrameworkTest
                return builder.openStream();
             }
          });
-
+         
          // Install/Start the test bundle
          testBundle = installBundle(archive);
          testBundle.start();
          assertBundleState(Bundle.ACTIVE, testBundle.getState());
-
+         
          // Allow 10s for the HttpService to become available
-         ServiceReference sref = getServiceReference(HttpService.class.getName(), 10000);
+         ServiceReference sref = getServiceReference(HttpService.class.getName()
+         , 10000L);
          assertNotNull("HttpService available", sref);
       }
    }
-
+   
    @Test
    public void testServletAccess() throws Exception
    {
-      String line = getHttpResponse("/servlet?test=plain", 5000);
+      String line = getHttpResponse("/servlet?test=plain");
       assertEquals("Hello from Servlet", line);
    }
 
    @Test
    public void testServletInitProps() throws Exception
    {
-      String line = getHttpResponse("/servlet?test=initProp", 5000);
+      String line = getHttpResponse("/servlet?test=initProp");
       assertEquals("initProp=SomeValue", line);
    }
 
    @Test
    public void testServletBundleContext() throws Exception
    {
-      String line = getHttpResponse("/servlet?test=context", 5000);
+      String line = getHttpResponse("/servlet?test=context");
       assertEquals("http-service-test", line);
    }
 
    @Test
    public void testResourceAccess() throws Exception
    {
-      String line = getHttpResponse("/file/message.txt", 5000);
+      String line = getHttpResponse("/file/message.txt");
       assertEquals("Hello from Resource", line);
    }
 
-   private String getHttpResponse(String reqPath, int timeout) throws IOException
+   private String getHttpResponse(String reqPath) throws Exception
    {
-      return HttpServiceCapability.getHttpResponse(getServerHost(), DEFAULT_HTTP_SERVICE_PORT, reqPath, timeout);
+      URL url = new URL("http://" + getServerHost() + ":8090" + reqPath);
+      BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+      return br.readLine();
    }
 }
