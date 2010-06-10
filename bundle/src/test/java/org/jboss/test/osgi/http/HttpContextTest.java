@@ -19,43 +19,47 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.osgi.http.internal;
+
 
 //$Id$
+package org.jboss.test.osgi.http;
 
-//import org.ops4j.pax.web.service.jetty.internal.CompositeActivator;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.net.URL;
+
+import org.jboss.osgi.http.internal.JBossWebHttpContextImpl;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.service.http.HttpContext;
 
 /**
- * An HttpService activator
+ * Test the HttpContext.
  * 
  * @author thomas.diesler@jboss.com
- * @since 19-Apr-2010
+ * @since 10-Jun-2010
  */
-public class HttpServiceActivator 
-// extends CompositeActivator 
-   implements BundleActivator
+public class HttpContextTest 
 {
-   private final HttpServiceFactory serviceFactory;
-
-   public HttpServiceActivator()
+   @Test
+   public void testGetMimeType() throws Exception
    {
-      serviceFactory = new HttpServiceFactory();
-
+      HttpContext context = new JBossWebHttpContextImpl(null);
+      assertNull("MimeType null", context.getMimeType("any-name"));
    }
 
-   @Override
-   public void start(BundleContext context) throws Exception
+   @Test
+   public void testGetResource() throws Exception
    {
-      // use the HttpServiceFatory::start
-      //super.start(context);
-   }
-
-   @Override
-   public void stop(BundleContext context) throws Exception
-   {
-      //super.stop(context);
+      String resname = "resource-name";
+      URL resurl = new URL("http://resource-name");
+      
+      Bundle bundle = Mockito.mock(Bundle.class);
+      Mockito.stub(bundle.getResource(resname)).toReturn(resurl);
+      
+      HttpContext context = new JBossWebHttpContextImpl(bundle);
+      assertEquals("Resource not null", resurl, context.getResource(resname));
    }
 }

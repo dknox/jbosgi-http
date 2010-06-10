@@ -19,43 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.osgi.http.internal;
+
 
 //$Id$
+package org.jboss.test.osgi.http;
 
-//import org.ops4j.pax.web.service.jetty.internal.CompositeActivator;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import static org.junit.Assert.assertNotNull;
 
+import org.jboss.osgi.http.internal.JBossWebWrapper;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
- * An HttpService activator
+ * Test the JBossWeb wrapper.
  * 
  * @author thomas.diesler@jboss.com
- * @since 19-Apr-2010
+ * @since 10-Jun-2010
  */
-public class HttpServiceActivator 
-// extends CompositeActivator 
-   implements BundleActivator
+@Ignore
+public class JBossWebWrapperTest 
 {
-   private final HttpServiceFactory serviceFactory;
-
-   public HttpServiceActivator()
+   @Test
+   public void testServletAccess() throws Exception
    {
-      serviceFactory = new HttpServiceFactory();
-
-   }
-
-   @Override
-   public void start(BundleContext context) throws Exception
-   {
-      // use the HttpServiceFatory::start
-      //super.start(context);
-   }
-
-   @Override
-   public void stop(BundleContext context) throws Exception
-   {
-      //super.stop(context);
+      JBossWebWrapper wrapper = new JBossWebWrapper();
+      assertNotNull("Server not null", wrapper.getServer());
    }
 }

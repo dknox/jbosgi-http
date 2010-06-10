@@ -1,29 +1,19 @@
-
-
-package org.jboss.osgi.http;
+package org.jboss.osgi.http.internal;
 
 // Dictionary is outdated but required by OSGi. 
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.ServletContext;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.apache.catalina.Container;
-import org.apache.catalina.Context;
-import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.startup.ContextConfig;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Constants;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
-
 
 public class JBossWebHttpServiceImpl implements HttpService
 {
@@ -32,13 +22,11 @@ public class JBossWebHttpServiceImpl implements HttpService
    private static ConcurrentHashMap<String, StandardContext> registrar;
    private final JBossWebHttpContextImpl ctxImpl;
 
-   public JBossWebHttpServiceImpl(
-      final JBossWebHttpContextImpl httpCtx, final JBossWebWrapper server
-      )
+   public JBossWebHttpServiceImpl(final JBossWebHttpContextImpl httpCtx, final JBossWebWrapper server)
    {
       ctxImpl = httpCtx;
       tcWrapper = server;
-      registrar = new ConcurrentHashMap<String,StandardContext>();
+      registrar = new ConcurrentHashMap<String, StandardContext>();
    }
 
    // This service returns the same context each time
@@ -48,32 +36,23 @@ public class JBossWebHttpServiceImpl implements HttpService
    }
 
    // Find the servlet, delete old resources, add the new resources 
-   public void registerResources(String alias, 
-                  String name,
-                  HttpContext context
-                  ) throws NamespaceException
+   public void registerResources(String alias, String name, HttpContext context) throws NamespaceException
    {
    }
 
-   public void registerServlet(
-                  String alias,
-                  Servlet servlet,
-                  Dictionary initparams,
-                  HttpContext context
-                  ) throws ServletException, NamespaceException
+   @SuppressWarnings("rawtypes")
+   public void registerServlet(String alias, Servlet servlet, Dictionary initparams, HttpContext context) throws ServletException, NamespaceException
    {
       //should check the registrar to make sure it's not a duplicate
       StandardContext stdCtx = new StandardContext();
       stdCtx.setName(alias);
       stdCtx.setWorkDir(context.getResource("workDir").toString());
       ServletContext servletCtx = stdCtx.getServletContext();
+      
       // addServlet should compile any annotations.
-      ServletRegistration.Dynamic srvRegDyn = servletCtx.addServlet(
-         alias, servlet
-         );
-      // Dictionary is deprecated. Using ye-olde enumeration.. 
-      java.util.Enumeration parmKeys = initparams.keys();
-      for (java.util.Enumeration e = initparams.keys(); e.hasMoreElements();)
+      ServletRegistration.Dynamic srvRegDyn = servletCtx.addServlet(alias, servlet);
+      
+      for (Enumeration e = initparams.keys(); e.hasMoreElements();)
       {
          String key = (String)e.nextElement();
          String parm = (String)initparams.get(key);
@@ -89,8 +68,7 @@ public class JBossWebHttpServiceImpl implements HttpService
    }
 
    //Unregister previously registered Resources
-   public void unregister(String alias)
-      throws IllegalArgumentException
+   public void unregister(String alias) throws IllegalArgumentException
    {
    }
 

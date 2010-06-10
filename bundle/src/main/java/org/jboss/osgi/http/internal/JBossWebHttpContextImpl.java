@@ -1,5 +1,4 @@
-
-package org.jboss.osgi.http;
+package org.jboss.osgi.http.internal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,20 +7,14 @@ import java.net.URL;
 import java.io.IOException;
 import org.osgi.framework.Bundle;
 import org.osgi.service.http.HttpContext;
-import org.osgi.framework.ServiceRegistration;
 
 public class JBossWebHttpContextImpl implements HttpContext
 {
+   private Bundle bundle;
 
-   private final Bundle bundle;
-   private final ServiceRegistration srvReg;
-
-   public JBossWebHttpContextImpl(final Bundle bndle, 
-      final ServiceRegistration sr
-      )
+   public JBossWebHttpContextImpl(final Bundle bundle)
    {
-      bundle = bndle;
-      srvReg = sr;
+      this.bundle = bundle;
    }
 
    public String getMimeType(final String name)
@@ -35,11 +28,7 @@ public class JBossWebHttpContextImpl implements HttpContext
       return bundle.getResource(name);
    }
 
-   public boolean handleSecurity(
-                  final HttpServletRequest req,
-                  final HttpServletResponse resp
-                  )
-                  throws IOException
+   public boolean handleSecurity(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
    {
       // for now just return true
       return true;

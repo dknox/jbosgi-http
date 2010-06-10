@@ -41,11 +41,11 @@ import org.jboss.test.osgi.http.bundle.EndpointServlet;
 import org.jboss.test.osgi.http.bundle.HttpServiceTestActivator;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.launch.Framework;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.launch.Framework;
 import org.osgi.service.http.HttpService;
 
 /**
@@ -54,6 +54,7 @@ import org.osgi.service.http.HttpService;
  * @author thomas.diesler@jboss.com
  * @since 19-Apr-2010
  */
+@Ignore
 public class HttpServiceTestCase extends OSGiFrameworkTest
 {
    private static Bundle testBundle;
