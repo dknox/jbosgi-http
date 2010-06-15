@@ -26,6 +26,7 @@ package org.jboss.test.osgi.http;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
@@ -33,8 +34,12 @@ import org.jboss.osgi.http.internal.JBossWebHttpContextImpl;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 /**
  * Test the HttpContext.
  * 
@@ -46,8 +51,11 @@ public class HttpContextTest
    @Test
    public void testGetMimeType() throws Exception
    {
-      HttpContext context = new JBossWebHttpContextImpl(null);
-      assertNull("MimeType null", context.getMimeType("any-name"));
+      Bundle bundle = Mockito.mock(Bundle.class);
+      String mimetype = "/text/xhtml";
+      String resname = "MimeType";
+      HttpContext context = new JBossWebHttpContextImpl(bundle);
+      assertNull("MimeType is not null", context.getMimeType(resname));
    }
 
    @Test
@@ -58,8 +66,19 @@ public class HttpContextTest
       
       Bundle bundle = Mockito.mock(Bundle.class);
       Mockito.stub(bundle.getResource(resname)).toReturn(resurl);
-      
+      ServiceRegistration svcreg = Mockito.mock(ServiceRegistration.class);
       HttpContext context = new JBossWebHttpContextImpl(bundle);
-      assertEquals("Resource not null", resurl, context.getResource(resname));
+      assertEquals("Value not" + resurl, resurl, context.getResource(resname));
+   }
+
+   @Test
+   public void testHandleSecurity() throws Exception
+   {
+      Bundle bundle = Mockito.mock(Bundle.class);
+      ServiceRegistration svcreg = Mockito.mock(ServiceRegistration.class);
+      HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+      HttpServletResponse response  = Mockito.mock(HttpServletResponse.class);
+      HttpContext context = new JBossWebHttpContextImpl(bundle);
+      assertTrue(context.handleSecurity(request, response));
    }
 }

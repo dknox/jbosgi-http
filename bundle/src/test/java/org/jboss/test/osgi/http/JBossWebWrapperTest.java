@@ -25,6 +25,7 @@
 package org.jboss.test.osgi.http;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.osgi.http.internal.JBossWebWrapper;
 import org.junit.Ignore;
@@ -36,13 +37,25 @@ import org.junit.Test;
  * @author thomas.diesler@jboss.com
  * @since 10-Jun-2010
  */
-@Ignore
+
 public class JBossWebWrapperTest 
 {
+   @Test
+   public void testStartServer() throws Exception
+   {
+      JBossWebWrapper wrapper = new JBossWebWrapper();
+      wrapper.startServer();
+      assertNotNull("Server is null", wrapper.getServer());
+      assertTrue("Server is not started", wrapper.isStarted());
+      wrapper.stopServer();
+   }
+
    @Test
    public void testServletAccess() throws Exception
    {
       JBossWebWrapper wrapper = new JBossWebWrapper();
-      assertNotNull("Server not null", wrapper.getServer());
+      wrapper.startServer();
+      assertNotNull("Server is null", wrapper.getServer());
+      wrapper.stopServer();
    }
 }

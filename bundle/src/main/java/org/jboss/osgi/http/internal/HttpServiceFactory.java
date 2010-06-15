@@ -10,7 +10,7 @@ import org.osgi.framework.ServiceRegistration;
 public class HttpServiceFactory implements ServiceFactory
 {
    private Catalina catalinaInstance;
-   private JBossWebWrapper server;
+   private JBossWebWrapper wrapper;
    private HashMap<String, JBossWebHttpServiceImpl> services;
 
    /*
@@ -18,16 +18,24 @@ public class HttpServiceFactory implements ServiceFactory
     */
    public HttpServiceFactory()
    {
-      server = new JBossWebWrapper();
+      try
+      {
+         wrapper = new JBossWebWrapper();
+         wrapper.startServer();
+      } catch (Exception ex)
+      {
+         //TBD connect up with logging
+         ex.printStackTrace();
+      }
    }
 
    /* 
     * return a new service instance each time
     */
-   public Object getService(final Bundle servicebndl, final ServiceRegistration reg)
+   public Object getService(final Bundle bundle, final ServiceRegistration reg)
    {
-      JBossWebHttpContextImpl ctxImpl = new JBossWebHttpContextImpl(servicebndl);
-      JBossWebHttpServiceImpl srvcImpl = new JBossWebHttpServiceImpl(ctxImpl, server);
+      //get the workdir from the ServiceRegistration ?
+      JBossWebHttpServiceImpl srvcImpl = new JBossWebHttpServiceImpl(bundle, wrapper, "/home/dknox/test" );
       return srvcImpl;
    }
 

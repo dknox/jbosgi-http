@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2005, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.jboss.osgi.http.internal;
 
 // Dictionary is outdated but required by OSGi. 
@@ -10,29 +31,36 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+import org.osgi.framework.Bundle;
+
 import org.apache.catalina.core.StandardContext;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-public class JBossWebHttpServiceImpl implements HttpService
+public class JBossWebHttpServiceImpl 
 {
-   // private final Bundle bundle;
-   private final JBossWebWrapper tcWrapper;
-   private static ConcurrentHashMap<String, StandardContext> registrar;
-   private final JBossWebHttpContextImpl ctxImpl;
+   private final Bundle bundle;
+   private final JBossWebWrapper jbwWrapper;
+   //private static ConcurrentHashMap<String, HttpContext> registrar;
+   //private final JBossWebHttpContext httpCtx;
+   private final String workDir;
 
-   public JBossWebHttpServiceImpl(final JBossWebHttpContextImpl httpCtx, final JBossWebWrapper server)
+   public JBossWebHttpServiceImpl(final Bundle bundle, 
+                                  final JBossWebWrapper server, 
+                                  String workDir
+                                  )
    {
-      ctxImpl = httpCtx;
-      tcWrapper = server;
-      registrar = new ConcurrentHashMap<String, StandardContext>();
+      this.bundle = bundle;
+      this.jbwWrapper = server;
+      this.workDir = workDir;
+      //registrar = new ConcurrentHashMap<String, HttpContext>();
    }
 
    // This service returns the same context each time
    public HttpContext createDefaultHttpContext()
    {
-      return ctxImpl;
+      return new JBossWebHttpContextImpl(this.bundle);
    }
 
    // Find the servlet, delete old resources, add the new resources 
@@ -64,7 +92,7 @@ public class JBossWebHttpServiceImpl implements HttpService
       // the web fragment or a web.xml under the servlet's name
 
       //do this last
-      registrar.put(alias, stdCtx);
+      //registrar.put(alias, context);
    }
 
    //Unregister previously registered Resources
