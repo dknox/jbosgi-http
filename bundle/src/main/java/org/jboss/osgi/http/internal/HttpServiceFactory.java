@@ -2,15 +2,12 @@ package org.jboss.osgi.http.internal;
 
 import java.util.HashMap;
 
-import org.apache.catalina.startup.Catalina;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
 public class HttpServiceFactory implements ServiceFactory
 {
-   private Catalina catalinaInstance;
-   private JBossWebWrapper wrapper;
    private HashMap<String, JBossWebHttpServiceImpl> services;
 
    /*
@@ -18,24 +15,16 @@ public class HttpServiceFactory implements ServiceFactory
     */
    public HttpServiceFactory()
    {
-      try
-      {
-         wrapper = new JBossWebWrapper();
-         wrapper.startServer();
-      } catch (Exception ex)
-      {
-         //TBD connect up with logging
-         ex.printStackTrace();
-      }
    }
 
    /* 
-    * return a new service instance each time
+    * Return a new service instance each time for now. It may need
+    * to be smarter later.
+    * 
     */
    public Object getService(final Bundle bundle, final ServiceRegistration reg)
    {
-      //get the workdir from the ServiceRegistration ?
-      JBossWebHttpServiceImpl srvcImpl = new JBossWebHttpServiceImpl(bundle, wrapper, "/home/dknox/test" );
+      JBossWebHttpServiceImpl srvcImpl = new JBossWebHttpServiceImpl(bundle, reg);
       return srvcImpl;
    }
 

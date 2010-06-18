@@ -66,7 +66,6 @@ public class HttpContextTest
       
       Bundle bundle = Mockito.mock(Bundle.class);
       Mockito.stub(bundle.getResource(resname)).toReturn(resurl);
-      ServiceRegistration svcreg = Mockito.mock(ServiceRegistration.class);
       HttpContext context = new JBossWebHttpContextImpl(bundle);
       assertEquals("Value not" + resurl, resurl, context.getResource(resname));
    }

@@ -21,7 +21,7 @@
  */
 package org.jboss.osgi.http.internal;
 
-// Dictionary is outdated but required by OSGi. 
+// Dictionary is deprecated but required by OSGi. 
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,39 +31,42 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.osgi.framework.Bundle;
-
 import org.apache.catalina.core.StandardContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-public class JBossWebHttpServiceImpl 
+public class JBossWebHttpServiceImpl implements HttpService
 {
-   private final Bundle bundle;
    private final JBossWebWrapper jbwWrapper;
-   //private static ConcurrentHashMap<String, HttpContext> registrar;
-   //private final JBossWebHttpContext httpCtx;
-   private final String workDir;
+   private final Bundle bundle;
 
-   public JBossWebHttpServiceImpl(final Bundle bundle, 
-                                  final JBossWebWrapper server, 
-                                  String workDir
-                                  )
+   public JBossWebHttpServiceImpl(final Bundle bundle, ServiceRegistration reg)
    {
       this.bundle = bundle;
-      this.jbwWrapper = server;
-      this.workDir = workDir;
-      //registrar = new ConcurrentHashMap<String, HttpContext>();
+      jbwWrapper = new JBossWebWrapper(new BundleAdapter(bundle, reg));
+      try
+      {
+         // initialize but don't start
+         jbwWrapper.init();
+      } catch (Exception ex)
+      {
+         // TBD: Logging
+         ex.printStackTrace();
+      }
    }
 
    // This service returns the same context each time
+   @Override
    public HttpContext createDefaultHttpContext()
    {
       return new JBossWebHttpContextImpl(this.bundle);
    }
 
    // Find the servlet, delete old resources, add the new resources 
+   @Override
    public void registerResources(String alias, String name, HttpContext context) throws NamespaceException
    {
    }
@@ -71,25 +74,18 @@ public class JBossWebHttpServiceImpl
    @SuppressWarnings("rawtypes")
    public void registerServlet(String alias, Servlet servlet, Dictionary initparams, HttpContext context) throws ServletException, NamespaceException
    {
-      //should check the registrar to make sure it's not a duplicate
-      StandardContext stdCtx = new StandardContext();
-      stdCtx.setName(alias);
-      stdCtx.setWorkDir(context.getResource("workDir").toString());
-      ServletContext servletCtx = stdCtx.getServletContext();
       
-      // addServlet should compile any annotations.
-      ServletRegistration.Dynamic srvRegDyn = servletCtx.addServlet(alias, servlet);
-      
-      for (Enumeration e = initparams.keys(); e.hasMoreElements();)
+      try
       {
-         String key = (String)e.nextElement();
-         String parm = (String)initparams.get(key);
-         srvRegDyn.setInitParameter(key, parm);
+         jbwWrapper.registerServlet(alias, servlet, initparams, context);
+      } catch (Exception ex)
+      {
+         // TBD logging
+         ex.printStackTrace();
       }
-      // A servlet is defined by it's annotations or a web.xml fragment
-      // Does a fragment exist in the bundle?
-      // For now assume the bundle has a file structure and we can find
-      // the web fragment or a web.xml under the servlet's name
+      
+      // Call the Wrapper
+      //should check the registrar to make sure it's not a duplicate
 
       //do this last
       //registrar.put(alias, context);
