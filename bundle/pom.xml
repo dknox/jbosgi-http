@@ -36,24 +36,26 @@
 
     <!-- JBossWeb -->
     <dependency>
-      <groupId>jboss.web</groupId>
-      <artifactId>servlet-api</artifactId>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>jboss.web</groupId>
-      <artifactId>jsp-api</artifactId>
+      <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+      <artifactId>jboss-jsp-api_2.2_spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>jboss.web</groupId>
-      <artifactId>el-api</artifactId>
+      <groupId>org.jboss.spec.javax.el</groupId>
+      <artifactId>jboss-el-api_2.2_spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>jboss.web</groupId>
+      <groupId>org.jboss.web</groupId>
       <artifactId>jasper-jdt</artifactId>
+      <version>3.0.0-beta-6</version>
     </dependency>
     <dependency>
-      <groupId>jboss.web</groupId>
+      <groupId>org.jboss.web</groupId>
       <artifactId>jbossweb</artifactId>
+      <version>3.0.0-beta-6</version>
     </dependency>
 
     <!-- Provided Dependencies -->
@@ -89,7 +91,7 @@
             <Bundle-Activator>org.jboss.osgi.http.internal.HttpServiceActivator</Bundle-Activator>
             <Export-Package>
               org.jboss.osgi.http;version=${version},
-              javax.servlet*;version=3.0.0-beta-2;split-package=first,
+              javax.servlet*;version=3.0.0-beta-6;split-package=first,
             </Export-Package>
             <Import-Package>
 
@@ -114,7 +116,7 @@
               <!-- org.jboss.servlet*, org.jboss.web*, org.apache.catalina*, org.apache.tomcat*, org.apache.jasper*, org.apache.cometd*, org.apache.coyote*, org.apache.el*, 
                 org.apache.naming*, -->
               org.eclipse.jdt.*,
-              org.apache.tools.ant*,
+              <!-- org.apache.tools.ant*, -->
 
               <!-- logging -->
               org.jboss.logging;version="[2.1,3.0)",

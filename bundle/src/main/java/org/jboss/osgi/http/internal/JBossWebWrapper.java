@@ -176,7 +176,7 @@ public final class JBossWebWrapper implements LifecycleListener
       // Either need a way to identify the 'host' or everything
       // is deployed under separate contexts under one host
       StandardHost host = (StandardHost)catalinaEngine.findChild("localhost");
-      StandardContext ctx = (StandardContext)host.map(alias);
+      StandardContext ctx = (StandardContext)host.findChild(alias);
       if (ctx == null)
       {
          String ctxclassname = host.getContextClass();
@@ -289,8 +289,8 @@ public final class JBossWebWrapper implements LifecycleListener
       // Hacked
       host.setName("localhost");
       host.setAppBase("webapps");
-      host.setAutoDeploy(true);
-      host.setUnpackWARs(true);
+      //host.setAutoDeploy(true);
+      //host.setUnpackWARs(true);
       host.setWorkDir("work");
       host.addLifecycleListener(this);
       catalinaEngine.addChild(host);
