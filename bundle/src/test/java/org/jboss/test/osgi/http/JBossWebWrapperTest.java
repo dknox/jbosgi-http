@@ -25,6 +25,10 @@
 package org.jboss.test.osgi.http;
 
 import java.util.Hashtable;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +36,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
@@ -57,13 +62,43 @@ public class JBossWebWrapperTest
    public void testStartServer() throws Exception
    {
       Bundle bundle = Mockito.mock(Bundle.class);
+      // Use the operators name and home directory as a base
+      String username = System.getProperty("user.name");
+      String userdir = System.getProperty("user.home");
+      String filesep = System.getProperty("file.separator");
+      String currdir = System.getProperty("user.dir");
+
+      String catpropname = "catalina.properties";
+      int idx1 = currdir.lastIndexOf("bundle");
+      String urlstring = currdir.substring(0, idx1);
+
+      if ( idx1 > 0 )
+      {
+         URL catpropsurl = new URL("file:///"+urlstring);
+         Mockito.stub(bundle.getResource(catpropname)).toReturn(catpropsurl);
+      }
+      
+      String serverxmlname = "server.xml";
+      URL serverxmlurl = new URL("file:///home/dknox/test/gittest/jbosgi-http/bundle/src/test/resources/META-INF/server.xml");
+      Mockito.stub(bundle.getResource(serverxmlname)).toReturn(serverxmlurl);
       ServiceRegistration svcreg = Mockito.mock(ServiceRegistration.class);
+      
       JBossWebWrapper wrapper = new JBossWebWrapper(new BundleAdapter(bundle,svcreg));
       wrapper.init();
       wrapper.startServer();
       assertNotNull("Server is null", wrapper.getServer());
       assertTrue("Server is not started", wrapper.isStarted());
+
+      // Hardcode for now. Server starts but does not respond. 
+      // TBD:No Context or webapp yet. Comment for now and work on metadata
+      //URL url = new URL("http://localhost:8091");
+      //BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
+      //assertNotNull("Server response is null", rdr.readLine());
+
       wrapper.stopServer();
+      // Wait 2 seconds for things to get cleaned up
+      Thread.currentThread().sleep(2000);
+      assertFalse("Server was never started", wrapper.isStarted());
    }
 
    @Test
@@ -86,7 +121,7 @@ public class JBossWebWrapperTest
       
       wrapper.registerServlet(alias, new SimpleServlet(), dic, httpctx);
       
-      //Next step is to ping the Servlet. It should return "testservlet".
+      //Next step is to ping the Servlet.
 
 
       wrapper.stopServer();

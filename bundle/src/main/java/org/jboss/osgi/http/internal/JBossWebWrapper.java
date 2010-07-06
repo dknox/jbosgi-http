@@ -23,6 +23,11 @@ package org.jboss.osgi.http.internal;
 
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Servlet;
@@ -81,8 +86,13 @@ public final class JBossWebWrapper implements LifecycleListener
    {
       try
       {
+         // Set some basic defaults
          System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
          System.setProperty("catalina.useNaming", "false");
+
+         setCatalinaProperties();
+
+         // locate server.xml
 
          // Initialize the Server and Service.
          initCatalinaServer();
@@ -295,4 +305,26 @@ public final class JBossWebWrapper implements LifecycleListener
       host.addLifecycleListener(this);
       catalinaEngine.addChild(host);
    }
+   
+   /*
+    * Sets System properties found in catalina.properties before
+    * starting the server
+    */
+   private void setCatalinaProperties()
+   {
+      // Ask the bundle for catalina properties
+      Properties props = metadata.getCatalinaProperties();
+
+      if ( props.size() > 0 )
+      {
+         Iterator<Map.Entry<Object,Object>> iter = props.entrySet().iterator();
+         while ( iter.hasNext() )
+         {
+            Map.Entry<Object,Object> entry = iter.next();
+            // TBD: Security Manager
+            System.setProperty( (String)entry.getKey(), (String)entry.getValue() );
+         }
+      }
+   }
+
 }

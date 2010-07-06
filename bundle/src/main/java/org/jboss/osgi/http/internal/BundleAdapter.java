@@ -21,8 +21,16 @@
  */
 package org.jboss.osgi.http.internal;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+import javax.xml.parsers.DocumentBuilder;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
+
+import org.w3c.dom.Document;
 
 /*
  * Centralize access to the Bundle and ServiceRegistration
@@ -37,6 +45,43 @@ public class BundleAdapter
    {
       this.bundle = bundle;
       this.serviceReg = svcReg;
+   }
+
+   // Change this to return a structure versus a URL
+   public Document getServerXml()
+   {
+      Document doc = null;
+      try 
+      {
+         URL srvxmlurl = bundle.getResource("server.xml");
+         InputStream is = srvxmlurl.openStream();
+         // Use Digester?
+      } catch (IOException iox)
+      {
+         // TBD: log
+         iox.printStackTrace();
+      }
+      return doc;
+   }
+
+   /*
+    * Find catalina.properties in the bundle. It may not be there,
+    * but the operation will always return a non-null reference.
+    */
+   public Properties getCatalinaProperties()
+   {
+      Properties props = new Properties();
+      try
+      {
+         URL propurl = bundle.getResource("catalina.properties");
+         InputStream is = propurl.openStream();
+         props.load(is);
+      } catch (IOException iox)
+      {
+         // TBD: log
+         iox.printStackTrace();
+      }
+      return props;
    }
 
 }
