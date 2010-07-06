@@ -162,13 +162,18 @@ public final class JBossWebWrapper implements LifecycleListener
 
    /*
     * Access the state of the server
+    * A false value indicates that server was not started or 
+    * the server has been stopped. 
     */
    public boolean isStarted()
    {
       return started;
    }
-   
-  
+
+   public boolean isStopped()
+   {
+      return !isStarted();
+   }
 
    /*
     * Add a servlet to the running server

@@ -98,7 +98,7 @@ public class JBossWebWrapperTest
       wrapper.stopServer();
       // Wait 2 seconds for things to get cleaned up
       Thread.currentThread().sleep(2000);
-      assertFalse("Server was never started", wrapper.isStarted());
+      assertTrue("Server was not stopped", wrapper.isStopped());
    }
 
    @Test
