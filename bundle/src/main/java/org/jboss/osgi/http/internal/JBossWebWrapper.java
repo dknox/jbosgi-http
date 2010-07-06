@@ -227,11 +227,15 @@ public final class JBossWebWrapper implements LifecycleListener
     * Listen for lifecycle events from the server
     */
    @Override
-   public void lifecycleEvent(LifecycleEvent event)
+   public void lifecycleEvent(final LifecycleEvent event)
    {
       if (event.getType().equals(Lifecycle.AFTER_START_EVENT))
       {
          started = true;
+      }
+      else if (event.getType().equals(Lifecycle.AFTER_STOP_EVENT))
+      {
+         started = false;
       }
    }
 
